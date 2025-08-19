@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Perpustakaan</title>
     <link
       rel="stylesheet"
       href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
@@ -12,43 +12,41 @@
   </head>
   <body>
     <div class="container mt-5">
-      <h1 class="text-center">List Buku</h1>
+      <h1 class="text-center">Daftar Buku Perpustakaan</h1>
 
       <!-- Form to Add New Todo -->
-      <form id="addTodoForm" class="my-4">
+      <form id="addBukuForm" class="my-4">
         <div class="input-group">
           <input
             type="text"
             id="newjudul"
             class="form-control"
-            placeholder="Add a new judul..."
+            placeholder="Tambahkan judul buku baru..."
             required
           />
           <div class="input-group-append">
-            <button type="submit" class="btn btn-primary">Add Buku</button>
+            <button type="submit" class="btn btn-primary">Tambahkan Buku</button>
           </div>
         </div>
       </form>
 
       <!-- List of Todos -->
-      <ul id="todoList" class="list-group">
-        <% Perpus.forEach(todo=> { %>
+      <ul id="bukuList" class="list-group">
+        <% buku.forEach(item=> { %>
         <li
           class="list-group-item d-flex justify-content-between align-items-center"
         >
-          <span class="<%= todo.completed ? 'completed' : '' %>">
-            <%= todo.judul %>
-          </span>
+        <span><%= item.judul %></span>
           <div>
             <button
               class="btn btn-sm btn-success mr-2 editBtn"
-              data-id="<%= todo.id %>"
+              data-id="<%= item.id %>"
             >
               Edit
             </button>
             <button
               class="btn btn-sm btn-danger deleteBtn"
-              data-id="<%= todo.id %>"
+              data-id="<%= item.id %>"
             >
               Delete
             </button>
@@ -69,7 +67,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="editModalLabel">Edit Todo</h5>
+              <h5 class="modal-title" id="editModalLabel">Edit Judul Buku</h5>
               <button
                 type="button"
                 class="close"
@@ -82,16 +80,16 @@
             <div class="modal-body">
               <form id="editTodoForm">
                 <div class="form-group">
-                  <label for="editTask">Buku</label>
+                  <label for="editTask">Judul Buku</label>
                   <input
                     type="text"
-                    id="editTask"
+                    id="editjudul"
                     class="form-control"
                     required
                   />
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">
-                  Save Changes
+                  Simpan perubahan
                 </button>
               </form>
             </div>
@@ -111,20 +109,20 @@
         let editId;
 
         // Add new todo
-        $("#addbukuform").on("submit", function (e) {
+        $("#addBukuForm").on("submit", function (e) {
           e.preventDefault();
-          const task = $("#newTask").val().trim();
-          if (task) {
+          const judul = $("#newjudul").val().trim();
+          if (judul) {
             $.ajax({
-              url: "/perpus",
+              url: "/perpustakaan",
               type: "POST",
               contentType: "application/json",
-              data: JSON.stringify({ task: task }),
+              data: JSON.stringify({ judul: judul }),
               success: function () {
                 location.reload();
               },
               error: function (error) {
-                console.error("Error adding task:", error.responseText);
+                console.error("Error menambahkan buku:", error.responseText);
               },
             });
           }
@@ -134,7 +132,7 @@
         $(".deleteBtn").on("click", function () {
           const id = $(this).data("id");
           $.ajax({
-            url: "/perpus/" + id,
+            url: "/perpustakaan/" + id,
             type: "DELETE",
             success: function () {
               location.reload();
@@ -145,20 +143,20 @@
         // Show edit modal
         $(".editBtn").on("click", function () {
           editId = $(this).data("id");
-          const currentTask = $(this).closest("li").find("span").text();
-          $("#editTask").val(currentTask);
+          const currentjudul = $(this).closest("li").find("span").text();
+          $("#editjudul").val(currentjudul);
           $("#editModal").modal("show");
         });
 
         // Update todo
         $("#editTodoForm").on("submit", function (e) {
           e.preventDefault();
-          const task = $("#editTask").val().trim();
-          if (task) {
+          const judul = $("#editjudul").val().trim();
+          if (judul) {
             $.ajax({
-              url: "/perpus/" + editId,
+              url: "/perpustakaan/" + editId,
               type: "PUT",
-              data: JSON.stringify({ judul: task, author: false }), //   disini belum
+              data: JSON.stringify({ judul: judul }), //   disini belum
               contentType: "application/json",
               success: function () {
                 location.reload();
